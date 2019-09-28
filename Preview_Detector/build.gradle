@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+
+android {
+compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "com.insta360.bvaandroid"
+        minSdkVersion 24
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM=android-24", "-DANDROID_STL=c++_shared",
+                        "-DCMAKE_BUILD_TYPE=Release"
+                abiFilters 'arm64-v8a'
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            debuggable = true
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled = true   //是否开启混淆
+            shrinkResources = true    //清理无用资源
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+            version "3.10.2"
+        }
+    }
+    sourceSets.main {
+        jniLibs.srcDirs = ["libs","bva_module/src/3party/mnn/android/lib",
+                           "bva_module/src/3party/opencv/android/lib"]
+        jni.srcDirs=["src/main/jni"]
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation project(path: ':opencvLibrary410')  // 依赖Opencv java
+    implementation "com.quickbirdstudios:yuvtomat:1.1.0"  // ImageReader.Format.YUV_420_888 to cv::Mat
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.31" // 上面的库是Kotlin的，所以要安装这个
+    implementation 'androidx.exifinterface:exifinterface:1.1.0-beta01'  // 用来读取图片配置信息的
+}
