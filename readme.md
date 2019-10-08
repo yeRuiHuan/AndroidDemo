@@ -1,5 +1,5 @@
 # AndroidDemo
-some Android Demo for shared
+some Android Demo
 
 ## Preview_Detector module
 - FullScreenTextureView.java: 继承TextureView，实现全屏预览
